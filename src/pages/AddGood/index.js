@@ -5,7 +5,7 @@ import { PageHeader } from '@/comps/PageHeader';
 import apier from '@/utils/apier.js';
 import formRules from '@/utils/commonFormRules.js';
 
-import './AddTask.md.sass';
+import './AddGood.md.sass';
 
 class AddTask extends React.Component {
   constructor(props) {

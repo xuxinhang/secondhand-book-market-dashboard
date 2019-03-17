@@ -5,14 +5,13 @@ import { Table, Message } from 'antd';
 const { Column } = Table;
 import { ExpandedDetailRow } from './ExpandedDetailRow';
 import apier from '@/utils/apier';
-// import bindThis from '@/utils/bind-this-decorator';
 
 import _ from 'lodash';
 
-import './TaskManage.md.sass';
+import './ManageOrder.md.sass';
 
 
-class TaskManage extends React.Component {
+class ManageOrder extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -57,7 +56,7 @@ class TaskManage extends React.Component {
       taskStage: this.state.taskListFilters.taskStage,
     };
 
-    apier.fetch('listTasks', { pagination, filters })
+    apier.fetch('listOrders', { pagination, filters })
     .then(({ data }) => {
       this.setState({
         tableData: data.list,
@@ -88,12 +87,10 @@ class TaskManage extends React.Component {
   }
 
   render() {
-    const genderMap = { male: '男', female: '女', 0: '男', 1: '女' };
-    const taskStageMap = {
-      'receiving': '待领取',
-      'processing': '处理中',
-      'confirming': '待确认',
-      'finished': '已完结',
+    const orderStateMap = {
+      'confirming': '待电话确认',
+      'delivering': '备货配送中',
+      'finished': '已结束',
     };
 
     /* const toggleExpandClickHandler = e => {
@@ -142,50 +139,26 @@ class TaskManage extends React.Component {
           loading={this.state.tableLoading}
           expandedRowRender={tableExpandedRowRender}
           expandIconAsCell={false}
-          expandIconColumnIndex={9}
+          expandIconColumnIndex={6}
           expandedRowClassName={() => 'ds-table-expanded-row'}
         >
-          {/**/}
           <Column title="编号" dataIndex="num" className="ds-table-first-column" width={60} />
-          <Column title="姓名" dataIndex="name" />
-          <Column title="性别" dataIndex="gender" render={text => genderMap[text] || ''} />
+          <Column title="收货人" dataIndex="client" />
+          <Column title="电话" dataIndex="clientTel" />
+          <Column title="收货地址" dataIndex="clientAddress" />
           <Column title="创建时间" dataIndex="createdTime" />
-          <Column title="机构用户" dataIndex="orgName" />
-          <Column title="上传机构" dataIndex="orgBelong" />
-          <Column title="操作员" dataIndex="operatorName" />
-          <Column title="测量部位" dataIndex="part" />
-          <Column title="任务状态" dataIndex="taskStage" render={text => taskStageMap[text] || ''} />
+          <Column title="任务状态" dataIndex="orderState" render={text => orderStateMap[text] || ''} />
           <Column title="操作" key="op" align="right" className="ds-table-last-column" />
-          {/*   render={(text, record, index) => (
-              <>
-                {this.state.tableExpandedRowKeys.includes(record.taskId)
-                  ? <Button size="small"
-                      data-key={record.taskId}
-                      data-index={index}
-                      data-tar={false}
-                    >
-                      收起
-                    </Button>
-                  : <Button size="small"
-                      data-key={record.taskId}
-                      data-index={index}
-                      data-tar={true}
-                    >
-                      查看更多
-                    </Button>
-                }
-              </>  
-            ) */}
         </Table>
       </>
     ); // () => toggleExpandedRow(record.taskId, index, false)
   }
 }
 
-TaskManage.propTypes = {
+ManageOrder.propTypes = {
   defaultFilters: PropTypes.object,
 };
 
 
-export default TaskManage; 
-export { TaskManage };
+export default ManageOrder;
+export { ManageOrder };

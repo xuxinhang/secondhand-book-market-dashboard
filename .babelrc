@@ -19,7 +19,7 @@
         },
       },
       "webpackHotModuleReloading": true,
-      "handleMissingStyleName": "ignore",
+      "handleMissingStyleName": "warn",
       "exclude": "styles",
     }],
     ["import", {

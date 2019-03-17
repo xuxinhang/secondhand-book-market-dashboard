@@ -80,25 +80,19 @@ const filters = {
     },
   },
   // 操作员列表 @
-  listOperators: {
+  listGoods: {
     handler: (resolve, reject, name, input) => {
       let mocked = Mock.mock({
         data: {
           pageInfo: usefulMockData.pageInfo,
           [`list|${input.pagination.pageSize}`]: [{
-            'operatorId|+1': 16,
+            'goodId|+1': 16,
             'num|+1': 16,
             'name': '@cname',
             'createdTime': '@date',
-            'tel': '13853321909',
-            'password': '@word',
-            'taskStatistics': {
-              'received|2-99': 0,
-              'processing|2-99': 0,
-              'confirming|2-99': 0,
-              'finished|2-99': 0,
-            },
-            'frozen|1': [2, 1],
+            'price': '138',
+            'type|1': [2, 1],
+            'state|1': [2, 1],
           }],
         },
         stat: usefulMockData.okStat,
@@ -106,16 +100,28 @@ const filters = {
       setTimeout(() => resolve(mocked), 1230);
     }
   },
-  // 冻结解冻操作员 @
-  freezeOperator: {
+  // 修改商品状态 @
+  changeGoodState: {
     handler: (resolve, reject, name, input) => {
       setTimeout(() => {
-        if(input.operator_id % 2) {
+        if(input.goodId % 2) {
           resolve({stat: usefulMockData.okStat});
         } else {
           reject({stat: usefulMockData.failStat});
         }
       }, 2230);
+    },
+  },
+  // 删除商品 @
+  deleteGood: {
+    handler: (resolve, reject, name, input) => {
+      setTimeout(() => {
+        if(input.goodId % 2) {
+          resolve({stat: usefulMockData.okStat});
+        } else {
+          reject({stat: usefulMockData.failStat});
+        }
+      }, 230);
     },
   },
   // 列出所有机构账户 @
@@ -155,24 +161,19 @@ const filters = {
     },
   },
   // 任务列表 @
-  listTasks: {
+  listOrders: {
     handler: (resolve, reject, name, input) => {
       let mocked = Mock.mock({
         data: {
           pageInfo: usefulMockData.pageInfo,
           [`list|${input.pagination.pageSize}`]: [{
-            'taskId|+1': input.pagination.pageNumber * 100,
+            'orderId|+1': input.pagination.pageNumber * 100,
             'num|+1': input.pagination.pageNumber * 100,
-            'name': '@cname',
-            'gender|1': [2, 1],
+            'client': '@cname',
+            'clientTel': '13876543456',
+            'clientAddress': '华科',
             'createdTime': '@date',
-            'orgName': '@cname',
-            'operatorName': '@cname',
-            'orgBelong': '法医中心',
-            'part': '腹部',
-            'taskStage|1': input.filters.taskStage == 'progressing'
-              ? ['processing', 'confirming']
-              : input.filters.taskStage,
+            'orderState|1': ['confirming', 'delivering', 'finished'],
           }],
         },
         stat: usefulMockData.okStat,

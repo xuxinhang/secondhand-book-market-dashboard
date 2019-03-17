@@ -9,65 +9,53 @@ import withAsyncComponent from '@/utils/asyncComponent';
 import { UserCtx } from '@/contexts/contexts.js';
 
 // Routes for different identities
-const WithAsyncTaskManage = withAsyncComponent(() => import('@/pages/TaskManage'));
-const WithTaskManageStatus = ({match}) => {
-  return (<WithAsyncTaskManage defaultFilters={{
-    taskStage: match.params.taskStage,
-  }} />);
-};
+// const WithAsyncTaskManage = withAsyncComponent(() => import('@/pages/TaskManage'));
+// const WithTaskManageStatus = ({match}) => {
+//   return (<WithAsyncTaskManage defaultFilters={{
+//     taskStage: match.params.taskStage,
+//   }} />);
+// };
 
 const pageRoutes = [
   {
-    path: 'taskManage/:taskStage',
-    component: WithTaskManageStatus, // An async component, too.
-    access: ['operator', 'administrator', 'organization'],
-  }, {
-    path: 'addTask',
-    component: withAsyncComponent(() => import('@/pages/AddTask')),
-    access: ['organization'],
-  }, {
-    path: 'operatorManage',
-    component: withAsyncComponent(() => import('@/pages/OperatorList')),
-    access: ['administrator'],
-  }, {
-    path: 'organizationManage',
-    component: withAsyncComponent(() => import('@/pages/OrganizationList')),
-    access: ['administrator'],
-  }, {
-    path: 'modifyPassword',
-    access: -1,
+    path: 'ModifyPassword',
     component: withAsyncComponent(() => import('@/pages/ModifyPassword')),
-  }, {
-    path: 'addOrganization',
-    component: withAsyncComponent(() => import('@/pages/AddOrganization')),
-    access: ['administrator'],
-  }, {
-    path: 'addOperator',
-    component: withAsyncComponent(() => import('@/pages/AddOperator')),
-    access: ['administrator'],
   },
+  {
+    path: 'AddGood',
+    component: withAsyncComponent(() => import('@/pages/AddGood')),
+  },
+  {
+    path: 'ManageGood',
+    component: withAsyncComponent(() => import('@/pages/ManageGood')),
+  },
+  {
+    path: 'ManageOrder',
+    component: withAsyncComponent(() => import('@/pages/ManageOrder')),
+  },
+  // {
+  //   path: 'SellOrder',
+  //   component: withAsyncComponent(() => import('@/pages/SellOrder')),
+  //   access: ['administrator'],
+  // },
 ];
 
 const menuLinks = [
   {
-    name: '任务管理',
+    name: '商品中心',
     menus: [
-      { path: 'taskManage/receiving',    title: '未领取', access: ['operator', 'administrator', 'organization'] },
-      { path: 'taskManage/progressing', title: '跟进中', access: ['operator', 'administrator', 'organization'] },
-      { path: 'taskManage/finished',  title: '已完结', access: ['operator', 'administrator', 'organization'] },
+      { path: 'AddGood', title: '添加商品' },
+      { path: 'ManageGood', title: '管理商品' },
     ]
   }, {
-    name: '账号管理',
+    name: '订单中心',
     menus: [
-      { path: 'operatorManage', title: '操作员管理', access: ['administrator'] },
-      { path: 'organizationManage', title: '机构用户管理', access: ['administrator'] },
-      // { path: 'addOperator', title: '添加操作员[Temp]', access: ['administrator'] },
-      // { path: 'addOrganization', title: '添加机构账户[Temp]', access: ['administrator'] },
+      { path: 'ManageOrder', title: '订单管理' },
     ],
   }, {
-    name: '操作中心',
+    name: '卖书订单中心',
     menus: [
-      { path: 'addTask', title: '新建项目', access: ['organization'] },
+      { path: 'SellOrder', title: '卖书订单' },
     ],
   },
 ];
@@ -107,7 +95,7 @@ class Admin extends Component {
               <Menu theme="dark" styleName="sty.layout-sider_menu" selectedKeys={[this.props.location.pathname]}>
               {menuLinks.reduce((accu, curt) => {
                 let menuList = curt.menus.reduce((accu, curt) => {
-                  (curt.access === -1 || curt.access.includes(info.ident))
+                  (curt.access === -1 || (!curt.access) || curt.access.includes(info.ident))
                   && accu.push(
                     <Menu.Item key={this.props.match.url+'/'+curt.path}>
                       <Link to={this.props.match.url+'/'+curt.path}>{curt.title}</Link>
@@ -164,7 +152,7 @@ class Admin extends Component {
             {info => {
               let relRoot = this.props.match.url + '/';
               return pageRoutes.reduce((accu, item) => (
-                (item.access === -1 || item.access.includes(info.ident))
+                (item.access === -1 || (!item.access) || item.access.includes(info.ident))
                 && accu.push(
                   <Route path={relRoot+item.path} key={relRoot+item.path} component={item.component} />
                 ),
