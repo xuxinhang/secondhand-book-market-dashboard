@@ -1,0 +1,36 @@
+{
+  "presets": [
+    "@babel/preset-react",
+    [
+      "@babel/preset-env",
+      {
+        // "debug": true,
+        "useBuiltIns": "usage",
+        "exclude": ["es6.promise"],
+      }
+    ],
+  ],
+  "plugins": [
+    ["react-hot-loader/babel"],
+    ["react-css-modules", {
+      "filetypes": {
+        ".sass": {
+          "syntax": "sugarss",
+        },
+      },
+      "webpackHotModuleReloading": true,
+      "handleMissingStyleName": "ignore",
+      "exclude": "styles",
+    }],
+    ["import", {
+      "libraryName": "antd",
+      "style": "css",
+    }],
+    ["@babel/plugin-proposal-decorators", {
+      "decoratorsBeforeExport": false,
+    }],
+    ["@babel/plugin-transform-runtime"],
+    ["lodash"],
+    ["@babel/plugin-syntax-dynamic-import"]
+  ]
+}
