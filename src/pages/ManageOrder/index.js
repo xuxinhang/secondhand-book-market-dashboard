@@ -24,7 +24,7 @@ class ManageOrder extends React.Component {
       totalRecord: 10,
       // 数据
       tableData: [/* {
-        'taskId': 16,
+        'orderId': 16,
         'num': 16,
         'name': '@cname',
         'gender': 1,
@@ -71,6 +71,15 @@ class ManageOrder extends React.Component {
     });
   }
 
+  changeItemData(patchData, lineIndex) {
+    this.setState(state => {
+      const prevItem = state.tableData[lineIndex];
+      const newTableData = [...state.tableData];
+      newTableData.splice(lineIndex, 1, { ...prevItem, ...patchData });
+      return { tableData: newTableData };
+    });
+  }
+
   componentDidMount() {
     this.paginationChangeHandler(1, 10);
   }
@@ -113,19 +122,23 @@ class ManageOrder extends React.Component {
 
     const tableExpandedRowRender = (record, index, indent, expanded) => {
       return (
-        <ExpandedDetailRow active={expanded} taskId={record.taskId} />
+        <ExpandedDetailRow
+          active={expanded}
+          orderId={record.orderId}
+          onItemChange={(patch) => this.changeItemData(patch, index)}
+        />
       );
     };
 
     return (
       <>
-        <PageHeader title="任务管理"></PageHeader>
+        <PageHeader title="订单管理"></PageHeader>
         {/* <ExpandedDetailRow /> */}
         <Table
           styleName="table-task-list ds-ant-table-wrapper"
           dataSource={this.state.tableData}
           rowClassName="ds-table-row"
-          rowKey="taskId"
+          rowKey="orderId"
           size="small"
           pagination={{
             current: this.state.currentPage,
@@ -151,7 +164,7 @@ class ManageOrder extends React.Component {
           <Column title="操作" key="op" align="right" className="ds-table-last-column" />
         </Table>
       </>
-    ); // () => toggleExpandedRow(record.taskId, index, false)
+    ); // () => toggleExpandedRow(record.orderId, index, false)
   }
 }
 

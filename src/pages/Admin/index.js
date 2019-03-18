@@ -26,6 +26,10 @@ const pageRoutes = [
     component: withAsyncComponent(() => import('@/pages/AddGood')),
   },
   {
+    path: 'EditGood/:goodId',
+    component: withAsyncComponent(() => import('@/pages/AddGood')),
+  },
+  {
     path: 'ManageGood',
     component: withAsyncComponent(() => import('@/pages/ManageGood')),
   },
@@ -33,11 +37,10 @@ const pageRoutes = [
     path: 'ManageOrder',
     component: withAsyncComponent(() => import('@/pages/ManageOrder')),
   },
-  // {
-  //   path: 'SellOrder',
-  //   component: withAsyncComponent(() => import('@/pages/SellOrder')),
-  //   access: ['administrator'],
-  // },
+  {
+    path: 'SellOrder',
+    component: withAsyncComponent(() => import('@/pages/SellOrder')),
+  },
 ];
 
 const menuLinks = [

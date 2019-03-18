@@ -202,7 +202,9 @@ class OperatorList extends React.Component {
             render={(text, record, index) => (
               <>
                 <Button
-                  className="ds-button-round-corner" ghost size="small" type="primary"
+                  className="ds-button-round-corner"
+                  styleName="operation-btn"
+                  ghost size="small" type="primary"
                   data-record-id={record.goodId}
                   data-record-name={record.name}
                   data-row-index={index}
@@ -210,20 +212,19 @@ class OperatorList extends React.Component {
                 >
                   删除商品
                 </Button>
-                {/* <Button
-                  className="ds-button-round-corner" ghost size="small"
-                  type={['','danger','primary'][record.state]}
-                  data-record-id={record.goodId}
-                  data-record-name={record.name}
-                  data-action={[0,2,1][record.state]}
-                  data-row-index={index}
-                  onClick={this.freezeBtnClickHandler}
-                >
-                  编辑商品
-                </Button> */}
+                <Link to={`/admin/EditGood/${record.goodId}`}>
+                  <Button
+                    className="ds-button-round-corner"
+                    styleName="operation-btn"
+                    type="primary" ghost size="small"
+                  >
+                    编辑商品
+                  </Button>
+                </Link>
                 <Button
-                  className="ds-button-round-corner" ghost size="small"
-                  type={['','danger','primary'][record.state]}
+                  className="ds-button-round-corner"
+                  styleName="operation-btn"
+                  type={['','danger','primary'][record.state]} ghost size="small"
                   data-record-id={record.goodId}
                   data-record-name={record.name}
                   data-action={[0,2,1][record.state]}

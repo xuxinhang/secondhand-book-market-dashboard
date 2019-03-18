@@ -79,7 +79,7 @@ const filters = {
       }, 1200);
     },
   },
-  // 操作员列表 @
+  // 商品列表 @
   listGoods: {
     handler: (resolve, reject, name, input) => {
       let mocked = Mock.mock({
@@ -99,6 +99,24 @@ const filters = {
       });
       setTimeout(() => resolve(mocked), 1230);
     }
+  },
+  goodDetail: {
+    handler: (resolve, reject, name, input) => {
+      let mocked = Mock.mock({
+        data: {
+          'goodId': 16,
+          'name': '@cname',
+          'price': 138.5,
+          'description': 'hello~',
+          'type': 2,
+          'state': 1,
+          'tags': { basic: [], college: [], grade: [1] },
+          'imgUrl': 'https://cn.bing.com/th?id=OJ.hhcqaPAuQWj60w&pid=MSNJVFeeds',
+        },
+        stat: usefulMockData.okStat,
+      });
+      setTimeout(() => resolve(mocked), 230);
+    },
   },
   // 修改商品状态 @
   changeGoodState: {
@@ -124,43 +142,7 @@ const filters = {
       }, 230);
     },
   },
-  // 列出所有机构账户 @
-  listOrganizations: {
-    handler: (resolve, reject, name, input) => {
-      let mocked = Mock.mock({
-        data: {
-          pageInfo: usefulMockData.pageInfo,
-          [`list|${input.pagination.pageSize}`]: [{
-            'orgId|+1': 16,
-            'num|+1': 16,
-            'name': '@cname',
-            'createdTime': '@date',
-            'tel': '13853321909',
-            'password': '@word',
-            'belong': '法医中心',
-            'email': 'we@we.com',
-            'taskNumber|25-299': 0,
-            'frozen|1': [2, 1],
-          }],
-        },
-        stat: usefulMockData.okStat,
-      });
-      setTimeout(() => resolve(mocked), 1230);
-    }
-  },
-  // 冻结解冻机构账户 @
-  freezeOrganization: {
-    handler: (resolve, reject, name, input) => {
-      setTimeout(() => {
-        if(input.org_id % 2) {
-          resolve({stat: usefulMockData.okStat});
-        } else {
-          reject({stat: usefulMockData.failStat});
-        }
-      }, 1230);
-    },
-  },
-  // 任务列表 @
+  // 订单列表 @
   listOrders: {
     handler: (resolve, reject, name, input) => {
       let mocked = Mock.mock({
@@ -182,54 +164,29 @@ const filters = {
     },
   },
   // 获取任务详情
-  taskDetail: {
+  orderDetail: {
     handler: (resolve, reject, name, input) => {
       let mocked = {
-        data: {
-          taskDetail: Mock.mock({
-            'taskId': input.taskId,
-            'name': '@cname',
-            'gender|1-2': 2,
-            'idcard': '@id',
-            'part': '春树里',
-            'method': '@word',
-            'time': '@date',
-            'description': '@cparagraph',
-            'age|10-88': 0,
-          }),
-          operatorDetail: {
-            'name': '操作员姓名',
-            'tel': '125643234565',
-          },
-          orgDetail: {
-            name: 'ORG',
-            tel: 'ORG123456',
-          },
-          taskStage: 'processing',
-          taskOperation: {
-            confirmedBy: 'organization',
-            allowOperatorConfirm: false,
-            receivingTime: 1539959905632,
-            downloadingAttachmentTime: 1539959905632,
-            uploadingReportTime: 1539959905632,
-            confirmingTime: 1539959905632,
-            taskAttachmentUrl: 'https://baidu.com',
-            taskReportUrl: 'https://weibo.com',
-          },
-          // task_attachment_is_downloaded: false,
-          // task_attachment_url: 'https://baidu.com',
-          // task_report_url: false, // 'https://weibo.com',
-          // can_operator_confirm: false,
-        },
+        data: Mock.mock({
+          'orderId': input.orderId,
+          // 'client': '@cname',
+          // 'time': '@date',
+          'clientComment': '@cparagraph',
+          'orderState|1': ['confirming', 'delivering', 'finished'],
+          'goodList': [
+            { name: '<1>', price: 80, number: 2 },
+            { name: '<2>', price: 10, number: 4 },
+          ],
+        }),
         stat: usefulMockData.okStat,
       };
       setTimeout(() => resolve(mocked), 1000);
     },
   },
-  // 领取任务 @
-  receiveTask: {
+  // 领取订单 @
+  deliverOrder: {
     handler: (resolve, reject, name, input) => {
-      if(input.taskId & 1) {
+      if(input.orderId & 1) {
         setTimeout(() => resolve({
           stat: usefulMockData.okStat,
         }), 300);
@@ -240,30 +197,36 @@ const filters = {
       }
     },
   },
-  // 上传报告文件 @ $
-  uploadTaskReport: {
-    handler: (resolve, reject) => {
-      setTimeout(() => resolve({
-        stat: usefulMockData.okStat,
+  // 确认订单 @
+  confirmOrder: {
+    handler: (resolve, reject, name, input) => {
+      if(input.orderId & 1) {
+        setTimeout(() => resolve({
+          stat: usefulMockData.okStat,
+        }), 300);
+      } else {
+        setTimeout(() => reject({
+          stat: usefulMockData.failStat,
+        }), 1000);
+      }
+    },
+  },
+  listSellOrder: {
+    handler: (resolve, reject, name, input) => {
+      let mocked = Mock.mock({
         data: {
-          taskReportUrl: 'https://www.bing.com',
-          canOperatorConfirm: true,
+          ['list|13']: [{
+            'sellOrderId|+1': 13,
+            'price': 12.45,
+            'tel': '1234567',
+            'address': '@cname',
+            'description': '@cparagraph',
+            'imgUrl': 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
+          }],
         },
-      }), 1000);
-    },
-  },
-  // 确认任务 @
-  confirmTask: {
-    handler: (resolve, reject, name, input) => {
-      if(input.taskId & 1) {
-        setTimeout(() => resolve({
-          stat: usefulMockData.okStat,
-        }), 300);
-      } else {
-        setTimeout(() => reject({
-          stat: usefulMockData.failStat,
-        }), 1000);
-      }
+        stat: usefulMockData.okStat,
+      });
+      setTimeout(() => resolve(mocked), 234);
     },
   },
 };
