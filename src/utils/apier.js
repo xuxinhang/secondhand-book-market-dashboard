@@ -15,15 +15,14 @@ const objectMapper = (keyMap) => {
       return {};
     }
     keyMap.forEach(m => {
-      let [ fromKey, toKey ] = m[1] !== undefined
-                               ? reverse ? [m[1], m[0]] : [m[0], m[1]]
-                               : [m[0], m[0]];
-      let rawValue = source[fromKey];
+      let [ fromKey, toKey ] =
+        m[1] !== undefined
+          ? reverse ? [m[1], m[0]] : [m[0], m[1]]
+          : [m[0], m[0]];
+let rawValue = source[fromKey];
       if(rawValue !== undefined) {
         let fn = reverse ? m[3] : m[2];
-        target[toKey] = (fn && fn.call)
-                        ? fn(rawValue)
-                        : rawValue;
+        target[toKey] = (fn && fn.call) ? fn(rawValue) : rawValue;
       } else if(m[3] !== undefined) {
         target[toKey] = m[3];
       }
@@ -103,7 +102,7 @@ const organizationItemMapper = objectMapper([
   ['frozen', 'frozen', v => v-1, v => [2,1][v]],
 ]);
 
-const taskStageMap = {
+const orderStateMap = {
   0: 'receiving',
   1: 'processing',
   2: 'confirming',
@@ -112,25 +111,17 @@ const taskStageMap = {
   processing: 'processing',
   confirming: 'confirming',
   finished: 'finished',
-  progressing: 'progressing', 
+  progressing: 'progressing',
 };
 
-const taskItemMapper = objectMapper([
-  ['taskId', 'task_id'],
-  ['num', 'index'],
-  ['name', 'name'],
-  ['gender', 'gender', v => genderMap[v], v => genderMap[v]],
-  ['createdTime', 'created_time'],
-  ['time', 'time', processTimeString, processTimeString],
-  ['idcard', 'idcard'],
-  ['method', 'method'],
-  ['orgName', 'org_name'],
-  ['operatorName', 'operator_name'],
-  ['orgBelong', 'org_belong'],
-  ['part', 'part'],
-  ['age', 'age'],
-  ['description', 'description'],
-  ['taskStage', 'stage', v => taskStageMap[v], v => taskStageMap[v]],
+const orderItemMapper = objectMapper([
+  ['orderId', 'id'],
+  ['num', 'id'], // [TODO]
+  ['client', 'buyer_name'],
+  ['clientTel', 'buyer_contact'],
+  ['clientAddress', 'address'],
+  ['createdTime', 'time'], // [TODO] Down
+  ['orderState', 'state', v => orderStateMap[v], v => orderStateMap[v]],
 ]);
 
 const taskOperationMapper = objectMapper([
@@ -147,7 +138,7 @@ const taskOperationMapper = objectMapper([
 const identMap = {
   0: 'administrator',
   1: 'operator',
-  2: 'organization', 
+  2: 'organization',
 };
 
 // API状态码和对应的友好的提示消息
@@ -244,7 +235,7 @@ const statusMsgMap = {
 const API_SERVER_URL = '/api';
 
 const filters = {
-  // 登录 @
+  // 登录 $
   login: {
     name: 'login',
     method: 'POST',
@@ -254,174 +245,160 @@ const filters = {
       password: inp.password,
     }),
     trim: rep => ({
-      token: rep.data && rep.data.token,
-      ident: rep.data
-             ? identMap[rep.data.ident]
-             : 'unknown',
-      // name: rep.data.name,
-      expireTime: +rep.data.expire_time || 0, // Timestamp
+      token: (rep.data && rep.data.token) || 'MOCKED_TOKEN',
+      ident: rep.data ? identMap[rep.data.ident] : 'unknown',
+      expireTime: +rep.data.expire_time || 36000000,
     }),
   },
-  // 登出 @
+  // 登出 $
   logout: {
     name: 'logout',
     method: 'POST',
     url: API_SERVER_URL + '/logout',
+    handler: (resolve) =>  resolve({ stat: 0, data: {} }),
   },
-  // 修改密码 @
+  // 修改密码 $
   modifyPassword: {
     name: 'modifyPassword',
     method: 'POST',
     url: API_SERVER_URL + '/modifyPassword',
     chop: inp => ({
-      prevPwd: inp.prevPwd,
-      newPwd: inp.newPwd,
+      username: inp.username,
+      old_password: inp.prevPwd,
+      new_password: inp.newPwd,
     }),
   },
-  // 添加任务 (这里的实现不优雅)
-  addItem: {
-    name: 'addItem',
+
+  // 添加商品 $
+  addGood: {
+    name: 'addGood',
     method: 'POST',
-    url: API_SERVER_URL + '/tasks/add',
+    url: inp => API_SERVER_URL + '/book/' + inp.goodId === undefined ? 'add' : 'edit',
     chop: inp => {
-      let fd = new FormData();
-      fd.append('attachments', inp.attachments[0]);
-      let pro = taskItemMapper(inp);
-      Object.keys(pro).forEach(k => fd.append(k, pro[k]));
+      const fd = new FormData();
+      fd.append('goodId', inp.goodId),
+      fd.append('name', inp.name);
+      fd.append('price', inp.price);
+      fd.append('type', inp.type);
+      fd.append('introduce', inp.description);
+      fd.append('sort_type', inp.tags.basic);
+      fd.append('grade', inp.tags.grade);
+      fd.append('college', inp.tags.college);
+      fd.append('img_url', inp.image);
       return fd;
     },
-    trim: rep => taskItemMapper(rep.data, true),
   },
-  // 添加机构账号 @
-  addOrganization: {
-    name: 'addOrganization',
+
+  // 删除商品 $
+  deleteGood: {
+    name: 'deleteGood',
+    url: API_SERVER_URL + '/book/delete',
     method: 'POST',
-    url: API_SERVER_URL + '/organization/add',
-    chop: inp => organizationItemMapper(inp, false),
-    trim: rep => organizationItemMapper(rep.data, true),
+    chop: rep => ({ book_id: rep.goodId }),
   },
-  // 添加操作员 @
-  addOperator: {
-    name: 'addOperator',
+
+  // 商品列表 $
+  listGoods: {
+    name: 'listGoods',
     method: 'POST',
-    url: API_SERVER_URL + '/operator/add',
-    chop: inp => operatorItemMapper(inp, false),
-    trim: rep => operatorItemMapper(rep.data, true),
+    url: API_SERVER_URL + '/book/listForManager',
+    trim: rep => {
+      return rep.map(item => ({
+        goodId: item.id,
+        num: item.order_num,
+        name: item.name,
+        createdTime: item.created_time,
+        price: item.price,
+        type: item.type,
+        state: item.status,
+      }));
+    },
   },
-  // 操作员列表 @
-  listOperators: {
-    name: 'listOperators',
+
+  // 商品详情 $
+  goodDetail: {
+    name: 'goodDetail',
     method: 'POST',
-    url: API_SERVER_URL + '/operator/list',
-    chop: inp => ({
-      pagination: processPagination(inp.pagination),
+    url: API_SERVER_URL + '/book/detail',
+    chop: inp => ({ id: inp.goodId }),
+    trim: rep => ({
+      goodId: undefined, // [TODO]
+      name: rep.name,
+      price: rep.price,
+      description: rep.introduce,
+      type: rep.type,
+      state: rep.status,
+      tags: {
+        basic: rep.sort_type,
+        college: rep.college,
+        grade: rep.grade,
+      },
+      imgUrl: rep.img_url,
     }),
+  },
+
+  // 订单列表 $
+  listOrders: {
+    name: 'listOrders',
+    method: 'POST',
+    url: API_SERVER_URL + '/order/list',
     trim: rep => ({
       pageInfo: rep.pageInfo,
       list: Array.isArray(rep.data)
-        && rep.data.map(item => ({
-          ...operatorItemMapper(item, true),
-          taskStatistics: {...item.task_statistics},
-        })),
+        && rep.data.map(item => orderItemMapper(item, true)),
     }),
   },
-  // 冻结解冻操作员 @
-  freezeOperator: {
-    name: 'freezeOperator',
-    method: 'POST',
-    url: API_SERVER_URL + '/operator/freeze',
-    chop: inp => ({
-      operator_id: inp.operatorId,
-      action: inp.action,
-    }),
-  },
-  // 列出所有机构账户 @
-  listOrganizations: {
-    name: 'listOrganizations',
-    method: 'POST',
-    url: () => API_SERVER_URL + '/organization/list',
-    chop: inp => ({
-      pagination: processPagination(inp.pagination),
-    }),
-    trim: rep => ({
-      pageInfo: rep.pageInfo,
-      list: Array.isArray(rep.data)
-            && rep.data.map(item => organizationItemMapper(item, true)),
-    }),
-  },
-  // 冻结解冻机构账户 @
-  freezeOrganization: {
-    name: 'freezeOrganization',
-    method: 'POST',
-    url: API_SERVER_URL + '/organization/freeze',
-    chop: inp => ({
-      org_id: inp.orgId,
-      action: inp.action,
-    }),
-  },
-  // 任务列表 @
-  listTasks: {
-    name: 'listTasks',
-    method: 'POST',
-    url: API_SERVER_URL + '/tasks/list',
-    chop: inp => ({
-      pagination: processPagination(inp.pagination),
-      query_stage: taskStageMap[inp.filters.taskStage], // [TODO]
-    }),
-    trim: rep => ({
-      pageInfo: rep.pageInfo,
-      list: Array.isArray(rep.data)
-            && rep.data.map(item => taskItemMapper(item, true)),
-    }),
-  },
-  // 获取任务详情
-  taskDetail: {
-    name: 'taskDetail',
+
+  // 获取订单详情 $
+  orderDetail: {
+    name: 'orderDetail',
     method: 'POST',
     url: inp => API_SERVER_URL + `/tasks/detail/${inp.taskId}`,
+    chop: inp => ({ order_id: inp.orderId }),
     trim: rep => {
       return {
-        taskDetail: taskItemMapper(rep.data.task_detail, true),
-        operatorDetail: operatorItemMapper(rep.data.operator_detail, true),
-        orgDetail: organizationItemMapper(rep.data.organization_detail, true),
-        taskStage: taskStageMap[rep.data.stage],
-        // task_attachment_is_downloaded: !!rep.data.task_attachment_is_downloaded,
-        // task_attachment_url: downloadUrlFilter(rep.data.task_attachment_url),
-        // task_report_url: downloadUrlFilter(rep.data.task_report_url),
-        // can_operator_confirm: !!rep.data.can_operator_confirm,
-        // task_confirm_by: 'organization',
-        taskOperation: taskOperationMapper(rep.data.taskOperation),
+        orderId: rep.order_id,
+        totalPrice: rep.price, // [TODO]
+        clientComment: rep.message,
+        orderState: rep.status,
+        goodList: rep.book_list.map(item => ({ name: item.name, num: item.number })),
       };
     },
   },
-  // 领取任务 @
-  receiveTask: {
-    name: 'receiveTask',
-    method: 'GET',
-    url: inp => API_SERVER_URL + `/tasks/operate/${inp.taskId}?action=receive`,
-    trim: rep => rep.data || {},
-  },
-  // 上传报告文件 @ $
-  uploadTaskReport: {
-    name: 'uploadTaskReport',
-    method: 'POST',
-    url: inp => API_SERVER_URL + `/tasks/operate/${inp.taskId}?action=process`,
-    chop: inp => {
-      let fd = new FormData();
-      fd.append('report_file', inp.file);
-      fd.append('task_id', inp.taskId);
-      return fd;
-    },
-    trim: rep => ({
-      task_report_url: downloadUrlFilter(rep.data && rep.data.task_report_url) || true,
+
+  // 修改订单状态
+  deliverOrder: {
+    name: 'deliverOrder',
+    url: API_SERVER_URL + '/book/operate',
+    chop: inp => ({
+      book_id: inp.goodId,
+      type: 1,
     }),
   },
-  // 确认任务 @
-  confirmTask: {
-    name: 'confirmTask',
-    method: 'GET',
-    url: inp => API_SERVER_URL + `/tasks/operate/${inp.taskId}?action=confirm`,
-    trim: rep => rep.data,
+  confirmOrder: {
+    name: 'confirmOrder',
+    url: API_SERVER_URL + '/book/operate',
+    chop: inp => ({
+      book_id: inp.goodId,
+      type: 2,
+    }),
+  },
+
+  listSellOrder: {
+    name: 'listSellOrder',
+    method: 'POST',
+    url: API_SERVER_URL + '/intention/list',
+    trim: rep => {
+      return rep.map(item => ({
+        sellOrderId: item.id,
+        price: item.price, // [TODO]
+        tel: item.contact,
+        address: item.address,
+        description: item.description,
+        imgUrl: item.imgUrl,
+        status: item.status,
+      }));
+    },
   },
 };
 
@@ -477,7 +454,7 @@ export default new CattleBridge({
         frimsg: '返回的数据是无效的',
       };
     } else {
-      result(respData.status.code == 200);
+      result(respData.status.code == 200); // 自动转换
       if([301, 302, 303].indexOf(respData.status.code) !== -1) {
         loginInfo.exit();
       }

@@ -185,7 +185,7 @@ class ExpandedDetailRow extends React.Component {
             </Col>
           </Row>
           <div styleName="section-wrap">
-            <p styleName="section_title">处理进度{detailData.orderState}</p>
+            <p styleName="section_title">处理进度{/* detailData.orderState */}</p>
             <ul styleName="operation-list">
               <li>
                 <Button

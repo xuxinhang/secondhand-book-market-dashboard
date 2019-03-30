@@ -47,7 +47,7 @@ const filters = {
     },
   },
   // 添加任务 (这里的实现不优雅)
-  addItem: {
+  addGood: {
     handler: (resolve, reject, name, input) => {
       setTimeout(() => {
         (input.gender ? resolve : reject)({
@@ -55,28 +55,6 @@ const filters = {
           data: null,
         });
       }, 600);
-    },
-  },
-  // 添加机构账号 @
-  addOrganization: {
-    handler: (resolve, reject, name, input) => {
-      setTimeout(() => {
-        (input.gender ? resolve : reject)({
-          stat: { code: 23, frimsg: '这里是友好的错误信息' },
-          data: null,
-        });
-      }, 1200);
-    },
-  },
-  // 添加操作员 @
-  addOperator: {
-    handler: (resolve, reject, name, input) => {
-      setTimeout(() => {
-        (input.name.length % 2 ? resolve : reject)({
-          stat: { code: 23, frimsg: '这里是友好的错误信息' },
-          data: null,
-        });
-      }, 1200);
     },
   },
   // 商品列表 @
@@ -142,7 +120,7 @@ const filters = {
       }, 230);
     },
   },
-  // 订单列表 @
+  // 订单列表
   listOrders: {
     handler: (resolve, reject, name, input) => {
       let mocked = Mock.mock({
@@ -177,6 +155,7 @@ const filters = {
             { name: '<1>', price: 80, number: 2 },
             { name: '<2>', price: 10, number: 4 },
           ],
+          'totalPrice': 123,
         }),
         stat: usefulMockData.okStat,
       };

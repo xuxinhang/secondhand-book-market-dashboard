@@ -33,7 +33,7 @@ class AddTask extends React.Component {
       formState: 1,
       formTip: ['info', '提交中'],
     });
-    apier.fetch('addItem', {
+    apier.fetch('addGood', {
       ...values,
     })
     .then(() => {

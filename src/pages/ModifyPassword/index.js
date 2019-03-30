@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Form, Input, Button, Alert, Modal } from 'antd';
 import { PageHeader } from '@/comps/PageHeader';
 import apier from '@/utils/apier.js';
+import loginInfo from '@/utils/loginInfoStorage.js';
 
 import './ModifyPassword.md.sass';
 
@@ -21,7 +22,7 @@ class ModifyPassword extends Component {
 class InitialForm extends Component {
   constructor(props) {
     super(props);
-    
+
     this.state= {
       formLoading: 0,
       formResult: ['', ''],
@@ -39,7 +40,7 @@ class InitialForm extends Component {
 
       if(values.newPwd !== values.reptPwd) {
         formOp.setFields({
-          reptPwd: { errors: [new Error('两次输入的新密码不匹配')] },
+          reptPwd: { errors: [ new Error('两次输入的新密码不匹配') ] },
         });
         return false;
       }
@@ -48,13 +49,22 @@ class InitialForm extends Component {
         formLoading: 1,
         formResult: ['', ''],
       });
-      apier.fetch('modifyPassword', {...values})
+
+      const loginInfoState = loginInfo.retrieveLoginInfo();
+
+      apier.fetch('modifyPassword', {
+        ...values,
+        username: loginInfoState.username,
+      })
       .then(() => {
         this.setState({
           formLoading: 2,
           formResult: ['success', '密码修改成功！'],
         });
-        Modal.info({ title: '密码修改成功！', content: '下一次请使用新密码登录系统。' });
+        Modal.info({
+          title: '密码修改成功！',
+          content: '下一次请使用新密码登录系统。',
+        });
       })
       .catch(({stat}) => {
         this.setState({
