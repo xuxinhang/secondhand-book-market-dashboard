@@ -131,15 +131,15 @@ class OrganizationList extends React.Component {
       });
     };
 
-    const paginationProps = {
-      current: this.state.currentPage,
-      pageSize: this.state.pageSize,
-      showQuickJumper: true,
-      showSizeChanger: true,
-      total: this.state.totalRecord,
-      onChange: onPaginationChange,
-      onShowSizeChange: onPaginationChange,
-    };
+    // const paginationProps = {
+    //   current: this.state.currentPage,
+    //   pageSize: this.state.pageSize,
+    //   showQuickJumper: true,
+    //   showSizeChanger: true,
+    //   total: this.state.totalRecord,
+    //   onChange: onPaginationChange,
+    //   onShowSizeChange: onPaginationChange,
+    // };
 
     return (
       <>
@@ -158,7 +158,7 @@ class OrganizationList extends React.Component {
           rowClassName="ds-table-row"
           rowKey="orgId"
           size="small"
-          pagination={paginationProps}
+          /* pagination={paginationProps} */
           loading={this.state.tableLoading}
         >
           <Column title="编号" dataIndex="num" width={56} className="ds-table-first-column" />
@@ -184,7 +184,7 @@ class OrganizationList extends React.Component {
                 >
                   {['','冻结账号', '解冻账号'][record.frozen]}
                 </Button>
-              </>  
+              </>
             )}
           />
         </Table>

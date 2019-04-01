@@ -2,7 +2,8 @@ import Mock from 'mockjs';
 
 // mock data
 const usefulMockData = {
-  pageInfo: { totalPage: 100, totalRecord: 12694 },
+  // pageInfo: { totalPage: 100, totalRecord: 12694 },
+  pageInfo: { totalPage: 1, totalRecord: 1 },
   okStat: { code: 200, msg: 'OK' },
   failStat: { code: 400, frimsg: 'Some Errors Occured.' },
 };
@@ -201,11 +202,27 @@ const filters = {
             'address': '@cname',
             'description': '@cparagraph',
             'imgUrl': 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
+            'state|1': [0,1,2], // 0 未定, 1 接受, 2 拒绝
           }],
         },
         stat: usefulMockData.okStat,
       });
       setTimeout(() => resolve(mocked), 234);
+    },
+  },
+  changeSellOrderState: {
+    handler: (resolve, reject, name, input) => {
+      if (input.sellOrderId % 2) {
+        setTimeout(() => resolve({
+          data: {},
+          stat: usefulMockData.okStat,
+        }), 1234);
+      } else {
+        setTimeout(() => reject({
+          data: {},
+          stat: usefulMockData.failStat,
+        }), 234);
+      }
     },
   },
 };

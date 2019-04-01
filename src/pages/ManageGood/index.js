@@ -157,15 +157,15 @@ class OperatorList extends React.Component {
       });
     };
 
-    const paginationProps = {
-      current: this.state.currentPage,
-      pageSize: this.state.pageSize,
-      showQuickJumper: true,
-      showSizeChanger: true,
-      total: this.state.totalRecord,
-      onChange: onPaginationChange,
-      onShowSizeChange: onPaginationChange,
-    };
+    // const paginationProps = {
+    //   current: this.state.currentPage,
+    //   pageSize: this.state.pageSize,
+    //   showQuickJumper: true,
+    //   showSizeChanger: true,
+    //   total: this.state.totalRecord,
+    //   onChange: onPaginationChange,
+    //   onShowSizeChange: onPaginationChange,
+    // };
 
     return (
       <>
@@ -184,7 +184,7 @@ class OperatorList extends React.Component {
           rowClassName="ds-table-row"
           rowKey="goodId"
           size="small"
-          pagination={paginationProps}
+          /* pagination={paginationProps} */
           loading={this.state.tableLoading}
         >
           <Column title="编号" dataIndex="num" width={60} className="ds-table-first-column" />

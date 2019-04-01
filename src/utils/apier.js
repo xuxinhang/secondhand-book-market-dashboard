@@ -3,6 +3,7 @@ import axios from 'axios';
 import loginInfo from '@/utils/loginInfoStorage.js';
 import _ from 'lodash';
 
+const mockedPageInfo = { totalPage: 1, totalRecord: 1 };
 
 // 将 Object 的键名做映射
 const objectMapper = (keyMap) => {
@@ -303,15 +304,18 @@ const filters = {
     method: 'POST',
     url: API_SERVER_URL + '/book/listForManager',
     trim: rep => {
-      return rep.map(item => ({
-        goodId: item.id,
-        num: item.order_num,
-        name: item.name,
-        createdTime: item.created_time,
-        price: item.price,
-        type: item.type,
-        state: item.status,
-      }));
+      return {
+        pageInfo: mockedPageInfo,
+        list: rep.map(item => ({
+          goodId: item.id,
+          num: item.order_num,
+          name: item.name,
+          createdTime: item.created_time,
+          price: item.price,
+          type: item.type,
+          state: item.status,
+        })),
+      };
     },
   },
 
@@ -343,7 +347,7 @@ const filters = {
     method: 'POST',
     url: API_SERVER_URL + '/order/list',
     trim: rep => ({
-      pageInfo: rep.pageInfo,
+      pageInfo: mockedPageInfo, // rep.pageInfo,
       list: Array.isArray(rep.data)
         && rep.data.map(item => orderItemMapper(item, true)),
     }),
@@ -399,6 +403,15 @@ const filters = {
         status: item.status,
       }));
     },
+  },
+  changeSellOrderState: {
+    name: 'listSellOrder',
+    method: 'POST',
+    url: API_SERVER_URL + '/intention/handle',
+    chop: inp => ({
+      intention_id: inp.sellOrderList,
+      mode: [,0,1][inp.state],
+    }),
   },
 };
 

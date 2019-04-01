@@ -172,7 +172,8 @@ class ExpandedDetailRow extends React.Component {
                 <tfoot>
                   <tr>
                     <td colSpan="3">
-                      <em>共计￥{detailData.goodList.reduce((a, c) => a + c.number * c.price, 0)}，
+                      {/* <em>共计￥{detailData.goodList.reduce((a, c) => a + c.number * c.price, 0)} */}
+                      <em>共计￥{detailData.totalPrice}，
                       {detailData.goodList.reduce((a, c) => a + c.number, 0)}本</em>
                     </td>
                   </tr>

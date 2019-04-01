@@ -140,7 +140,7 @@ class ManageOrder extends React.Component {
           rowClassName="ds-table-row"
           rowKey="orderId"
           size="small"
-          pagination={{
+          /* pagination={{
             current: this.state.currentPage,
             pageSize: this.state.pageSize,
             total: this.state.totalRecord,
@@ -148,7 +148,7 @@ class ManageOrder extends React.Component {
             onShowSizeChange: this.paginationChangeHandler,
             showQuickJumper: true,
             showSizeChanger: true,
-          }}
+          }} */
           loading={this.state.tableLoading}
           expandedRowRender={tableExpandedRowRender}
           expandIconAsCell={false}

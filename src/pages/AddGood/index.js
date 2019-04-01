@@ -89,7 +89,7 @@ class AddTask extends React.Component {
   render() {
     return (
       <>
-        <PageHeader title="新建数据" />
+        <PageHeader title="新建商品" />
         <section styleName="form-wrap">
           <Spin spinning={this.state.formLoading}>
             <WrappedForm
@@ -184,7 +184,7 @@ class RawForm extends React.Component {
 
     return (
       <Form onSubmit={this.submitHandler}>
-        <div className="line-decorated-text" styleName="form-section-title">测量对象</div>
+        <div className="line-decorated-text" styleName="form-section-title">基本信息</div>
         <Row gutter={36}>
           <Col span={8}>
             <Form.Item label="商品名称">
