@@ -91,7 +91,7 @@ class Admin extends Component {
         <div styleName="sty.layout-sider-wrap">
           <div styleName="sty.layout-sider">
             <div styleName="sty.layout-sider_top">
-              <em styleName="sty.logo-wrap">Body Scan</em>
+              <em styleName="sty.logo-wrap">二手书市</em>
             </div>
             <UserCtx.Consumer>
             {info =>
@@ -122,7 +122,7 @@ class Admin extends Component {
             </UserCtx.Consumer>
             <p styleName="sty.layout-sider_bottom">
               <span styleName="sty.copyright">
-                © 2018 BodyScan.<wbr />All Rights Reserved.
+                © 2018 SBM.<wbr />All Rights Reserved.
               </span>
             </p>
           </div>

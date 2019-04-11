@@ -4,6 +4,7 @@ const { CheckableTag } = Tag;
 
 export default function TagSelector (props) {
   const tagList = props.tags;
+  const singleMode = props.single;
   const selectedTags = props.value === undefined ? [] : props.value;
   if (!Array.isArray(tagList)) return;
 
@@ -11,9 +12,14 @@ export default function TagSelector (props) {
     const handler = props.onChange;
     if (!handler) return;
 
-    const nextSelectedTags = checked
-      ? [...selectedTags, tagValue]
-      : selectedTags.filter(t => t !== tagValue);
+    let nextSelectedTags;
+    if (singleMode) {
+      nextSelectedTags = checked ? [tagValue] : [];
+    } else {
+      nextSelectedTags = checked
+        ? [...selectedTags, tagValue]
+        : selectedTags.filter(t => t !== tagValue);
+    }
     handler(nextSelectedTags);
   }
 
