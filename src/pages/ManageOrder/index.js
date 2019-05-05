@@ -57,18 +57,18 @@ class ManageOrder extends React.Component {
     };
 
     apier.fetch('listOrders', { pagination, filters })
-    .then(({ data }) => {
-      this.setState({
-        tableData: data.list,
-        totalRecord: data.pageInfo.totalRecord,
+      .then(({ data }) => {
+        this.setState({
+          tableData: data.list,
+          totalRecord: data.pageInfo.totalRecord,
+        });
+      })
+      .catch(({ stat }) => {
+        Message.warn('获取数据出错：' + stat.frimsg);
+      })
+      .finally(() => {
+        this.setState({ tableLoading: false });
       });
-    })
-    .catch(({ stat }) => {
-      Message.warn('获取数据出错：' + stat.frimsg);
-    })
-    .finally(() => {
-      this.setState({ tableLoading: false });
-    });
   }
 
   changeItemData(patchData, lineIndex) {

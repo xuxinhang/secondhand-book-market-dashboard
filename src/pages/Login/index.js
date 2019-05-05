@@ -10,7 +10,7 @@ class LoginPage extends Component {
     return (
       <div styleName="login-wrapper">
         <section styleName="login-wrap">
-          <Card styleName="login-card" title="🔑 登录您的账户">
+          <Card styleName="login-card" title="🔑 登录二手书城控制台">
             <WrappedNormalLoginForm />
           </Card>
         </section>
@@ -63,7 +63,7 @@ class NormalLoginForm extends React.Component {
           });
         }
       });
-      
+
       if(!validPass) return;
     };
   }
@@ -111,7 +111,7 @@ class NormalLoginForm extends React.Component {
               block size="large"
               loading={this.state.formLoading}
             >
-              登录  
+              登录
             </Button>
           </Form.Item>
         </Form>

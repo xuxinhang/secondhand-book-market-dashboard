@@ -41,8 +41,9 @@ class AddTask extends React.Component {
         formState: 2,
         formTip: ['success', '操作成功'],
       });
+      const editGoodMode = this.props.match.params.goodId !== undefined;
       Modal.success({
-        title: '此项已被添加',
+        title: `此项已被${editGoodMode ? '修改' : '添加'}`,
         content: '您可以在浏览页进行查看和其他操作。',
       });
     })
@@ -66,6 +67,7 @@ class AddTask extends React.Component {
         initialFormValue: {
           ...state.initialFormValue,
           ...data,
+          goodId,
         },
         formLoading: false,
       }));
@@ -87,9 +89,10 @@ class AddTask extends React.Component {
   }
 
   render() {
+    const editGoodMode = this.props.match.params.goodId !== undefined;
     return (
       <>
-        <PageHeader title="新建商品" />
+        <PageHeader title={`${editGoodMode ? '编辑' : '新建'}商品`} />
         <section styleName="form-wrap">
           <Spin spinning={this.state.formLoading}>
             <WrappedForm
@@ -120,8 +123,9 @@ class RawForm extends React.Component {
         if(errors) return;
         let processedFormValue = {
           // ...this.state.initialFormValue,
-          goodId: this.props.initialFormValue.goodId,
           ...values,
+          goodId: this.props.initialFormValue.goodId,
+          image: values.image && values.image[0],
         };
         this.props.onSubmit.call(e.currentTarget, errors, processedFormValue);
       });
@@ -137,6 +141,12 @@ class RawForm extends React.Component {
       });
     };
     return false;
+  }
+
+  trimPriceField() {
+    const raw = this.props.form.getFieldValue('price');
+    const trimed = Math.round(parseFloat(raw) * 100) / 100;
+    this.props.form.setFieldsValue({ price: isNaN(trimed) ? '' : trimed });
   }
 
   render() {
@@ -201,7 +211,6 @@ class RawForm extends React.Component {
           <Col span={8}>
             <Form.Item label="价格">
             {getFieldDecorator('price', {
-              getValueFromEvent: e => Math.round(parseFloat(e.target.value) * 100) / 100,
               normalize: v => String(v),
               initialValue: initialFormValue.price,
               rules: [
@@ -209,7 +218,7 @@ class RawForm extends React.Component {
                 { pattern: /^[1-9]+?[0-9]*(\.[0-9]{1,2})?$/, message: '输入合法的商品价格' },
               ],
             })(
-              <Input />
+              <Input onBlur={() => this.trimPriceField()} />
             )}
             </Form.Item>
           </Col>
@@ -252,7 +261,7 @@ class RawForm extends React.Component {
                   {getFieldDecorator(`tags.${name}`, {
                     initialValue: initialFormValue.tags[name] || [],
                   })(
-                    <TagSelector tags={tags} />
+                    <TagSelector tags={tags} single />
                   )}
                 </Col>
               </Row>

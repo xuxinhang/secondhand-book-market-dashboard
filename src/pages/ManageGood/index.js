@@ -67,7 +67,7 @@ class OperatorList extends React.Component {
     let updateState = newState => this.setState({ freezeModalProps: newState });
     let { recordId, recordName, action, rowIndex } = e.target.dataset;
     let commonProps = {
-      title: `你是要将商品“${recordName}”${['','上架','下架'][action]}吗?`,
+      title: `你是要将商品“${recordName}”${['上架','下架'][action]}吗?`,
       visible: true,
       closable: false,
     };
@@ -91,7 +91,7 @@ class OperatorList extends React.Component {
       // network request
       apier.fetch('changeGoodState', {
         goodId: +recordId,
-        action: +action, // 2 = 冻结
+        action: +action,
       })
       .then(() => {
         Message.success('此商品的状态已更改');
@@ -192,10 +192,10 @@ class OperatorList extends React.Component {
           <Column title="创建时间" dataIndex="createdTime" />
           <Column title="价格" dataIndex="price" />
           <Column title="类别" dataIndex="type"
-            render={(text) => (['', '全套出售', '单本出售'][text])}
+            render={(text) => (['', '单本出售', '全套出售'][text])}
           />
           <Column title="状态" dataIndex="state"
-            render={(text) => (text === 1 ? '上架销售' : text === 2 ? '下架补货中' : '')}
+            render={(text) => ['上架销售中', '下架补货中'][text]}
           />
           <Column title="操作" key="op" align="right"
             className="ds-table-last-column"
@@ -224,14 +224,14 @@ class OperatorList extends React.Component {
                 <Button
                   className="ds-button-round-corner"
                   styleName="operation-btn"
-                  type={['','danger','primary'][record.state]} ghost size="small"
+                  type={['danger','primary'][record.state]} ghost size="small"
                   data-record-id={record.goodId}
                   data-record-name={record.name}
-                  data-action={[0,2,1][record.state]}
+                  data-action={[1,0][record.state]}
                   data-row-index={index}
                   onClick={this.onChangeStateBtnClick}
                 >
-                  {['','下架商品', '上架商品'][record.state]}
+                  {['下架商品', '上架商品'][record.state]}
                 </Button>
               </>
             )}

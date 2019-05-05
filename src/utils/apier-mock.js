@@ -47,7 +47,7 @@ const filters = {
       }, 1000);
     },
   },
-  // 添加任务 (这里的实现不优雅)
+  // 添加编辑商品
   addGood: {
     handler: (resolve, reject, name, input) => {
       setTimeout(() => {
@@ -99,15 +99,15 @@ const filters = {
   },
   // 修改商品状态 @
   changeGoodState: {
-    handler: (resolve, reject, name, input) => {
-      setTimeout(() => {
-        if(input.goodId % 2) {
-          resolve({stat: usefulMockData.okStat});
-        } else {
-          reject({stat: usefulMockData.failStat});
-        }
-      }, 2230);
-    },
+    // handler: (resolve, reject, name, input) => {
+    //   setTimeout(() => {
+    //     if(input.goodId % 2) {
+    //       resolve({stat: usefulMockData.okStat});
+    //     } else {
+    //       reject({stat: usefulMockData.failStat});
+    //     }
+    //   }, 2230);
+    // },
   },
   // 删除商品 @
   deleteGood: {
@@ -194,17 +194,15 @@ const filters = {
   listSellOrder: {
     handler: (resolve, reject, name, input) => {
       let mocked = Mock.mock({
-        data: {
-          ['list|13']: [{
-            'sellOrderId|+1': 13,
-            'price': 12.45,
-            'tel': '1234567',
-            'address': '@cname',
-            'description': '@cparagraph',
-            'imgUrl': 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
-            'state|1': [0,1,2], // 0 未定, 1 接受, 2 拒绝
-          }],
-        },
+        ['data|13']: [{
+          'sellOrderId|+1': 13,
+          'price': 12.45,
+          'tel': '1234567',
+          'address': '@cname',
+          'description': '@cparagraph',
+          'imgUrl': 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
+          'state|1': [0,1,2], // 0 未定, 1 接受, 2 拒绝
+        }],
         stat: usefulMockData.okStat,
       });
       setTimeout(() => resolve(mocked), 234);
@@ -227,7 +225,4 @@ const filters = {
   },
 };
 
-
 export default filters;
-
-

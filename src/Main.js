@@ -12,7 +12,7 @@ import './styles/common.sass';
 
 import { UserCtx } from './contexts/contexts.js';
 
-// withRouter 
+// withRouter
 // 注意：withRouter 放在 render 之外否则每次渲染的都是不同的component
 const withRouterAdmin = withRouter(Admin);
 const withRouterLogin = withRouter(Login);
@@ -44,7 +44,7 @@ class Main extends Component {
 
     this.retrieveLoginInfo = loginInfo.retrieve;
     this.updateLoginInfo = loginInfo.update;
-    
+
     // [NOTE] 需要在渲染<Route>之前读入登录状态
     //        否则刷新之后URL会因为Route未渲染而丢失
     this.state = {
@@ -68,7 +68,7 @@ class Main extends Component {
               useLoginModal: false,
             }, () => {
               loginInfo.exit();
-            });            
+            });
           }
         },
       },

@@ -67,7 +67,7 @@ class ExpandedDetailRow extends React.Component {
     try {
       let { data } = await apier.fetch('orderDetail', { orderId });
       this.setState({
-        detailData: data,
+        detailData: { ...data, orderId },
         dataLoading: false,
         currentOrderId: orderId,
       });
@@ -165,7 +165,7 @@ class ExpandedDetailRow extends React.Component {
                   {detailData.goodList.map(item => (
                   <tr key={item.name}>
                     <th>{item.name}</th>
-                    <td>￥{item.price}</td>
+                    {/* <td>￥{item.price}</td> */}
                     <td>x{item.number}</td>
                   </tr>))}
                 </tbody>

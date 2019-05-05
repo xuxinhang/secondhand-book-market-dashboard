@@ -83,11 +83,9 @@
   "proxy": {
     "/(api|downloadFile)": {
       "pathRewrite": {
-        "^/api": "/api",
-        "^/downloadFile": "/downloadFile"
+        "^/api": "/api"
       },
-      "targett": "http://192.168.23.1:5000/",
-      "target": "http://118.24.183.158/",
+      "target": "http://159.65.66.147/",
       "changeOrigin": true,
       "ws": true
     }

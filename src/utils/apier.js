@@ -20,7 +20,7 @@ const objectMapper = (keyMap) => {
         m[1] !== undefined
           ? reverse ? [m[1], m[0]] : [m[0], m[1]]
           : [m[0], m[0]];
-let rawValue = source[fromKey];
+      let rawValue = source[fromKey];
       if(rawValue !== undefined) {
         let fn = reverse ? m[3] : m[2];
         target[toKey] = (fn && fn.call) ? fn(rawValue) : rawValue;
@@ -104,15 +104,15 @@ const organizationItemMapper = objectMapper([
 ]);
 
 const orderStateMap = {
-  0: 'receiving',
-  1: 'processing',
-  2: 'confirming',
-  3: 'finished',
-  receiving: 'receiving',
-  processing: 'processing',
-  confirming: 'confirming',
-  finished: 'finished',
-  progressing: 'progressing',
+  // 0: 'receiving',
+  0: 'confirming',
+  1: 'delivering',
+  2: 'finished',
+  // receiving: 'receiving',
+  // processing: 'processing',
+  // confirming: 'confirming',
+  // finished: 'finished',
+  // progressing: 'progressing',
 };
 
 const orderItemMapper = objectMapper([
@@ -122,7 +122,7 @@ const orderItemMapper = objectMapper([
   ['clientTel', 'buyer_contact'],
   ['clientAddress', 'address'],
   ['createdTime', 'time'], // [TODO] Down
-  ['orderState', 'state', v => orderStateMap[v], v => orderStateMap[v]],
+  ['orderState', 'status', v => orderStateMap[v], v => orderStateMap[v]],
 ]);
 
 const taskOperationMapper = objectMapper([
@@ -240,16 +240,29 @@ const filters = {
   login: {
     name: 'login',
     method: 'POST',
-    url: API_SERVER_URL + '/login',
+    url: API_SERVER_URL + '/manager/login',
     chop: inp => ({
       username: inp.username,
       password: inp.password,
     }),
     trim: rep => ({
-      token: (rep.data && rep.data.token) || 'MOCKED_TOKEN',
-      ident: rep.data ? identMap[rep.data.ident] : 'unknown',
-      expireTime: +rep.data.expire_time || 36000000,
+      token: rep.token || 'MOCKED_TOKEN',
+      ident: rep.data ? identMap[rep.ident] : 'unknown',
+      expireTime: +rep.expire_time || 36000000,
     }),
+    handler: (resolve, reject, name, input) => {
+      setTimeout(() => {
+        resolve({
+          stat: 0,
+          data: {
+            token: 'TEST_TOKEN',
+            ident: input.username,
+            name: input.username,
+            expireTime: (Date.now() * 2),
+          },
+        });
+      }, 1800);
+    },
   },
   // 登出 $
   logout: {
@@ -262,7 +275,7 @@ const filters = {
   modifyPassword: {
     name: 'modifyPassword',
     method: 'POST',
-    url: API_SERVER_URL + '/modifyPassword',
+    url: API_SERVER_URL + '/manager/modifyPassword',
     chop: inp => ({
       username: inp.username,
       old_password: inp.prevPwd,
@@ -270,22 +283,23 @@ const filters = {
     }),
   },
 
-  // 添加商品 $
+  // 添加编辑商品 $
   addGood: {
     name: 'addGood',
     method: 'POST',
-    url: inp => API_SERVER_URL + '/book/' + inp.goodId === undefined ? 'add' : 'edit',
+    url: inp => API_SERVER_URL + '/book/' + (inp.goodId === undefined ? 'add' : 'edit'),
     chop: inp => {
       const fd = new FormData();
-      fd.append('goodId', inp.goodId),
+      inp.goodId !== undefined && fd.append('book_id', inp.goodId),
       fd.append('name', inp.name);
       fd.append('price', inp.price);
       fd.append('type', inp.type);
       fd.append('introduce', inp.description);
-      fd.append('sort_type', inp.tags.basic);
-      fd.append('grade', inp.tags.grade);
-      fd.append('college', inp.tags.college);
-      fd.append('img_url', inp.image);
+      fd.append('sort_type', inp.tags.basic[0] || 0);
+      fd.append('grade', inp.tags.grade[0] || 0);
+      fd.append('college', inp.tags.college[0] || 0);
+      // 图片是可选项
+      inp.image && fd.append('img_file', inp.image);
       return fd;
     },
   },
@@ -293,8 +307,8 @@ const filters = {
   // 删除商品 $
   deleteGood: {
     name: 'deleteGood',
-    url: API_SERVER_URL + '/book/delete',
     method: 'POST',
+    url: API_SERVER_URL + '/book/delete',
     chop: rep => ({ book_id: rep.goodId }),
   },
 
@@ -304,17 +318,20 @@ const filters = {
     method: 'POST',
     url: API_SERVER_URL + '/book/listForManager',
     trim: rep => {
+      console.log(rep);
       return {
         pageInfo: mockedPageInfo,
-        list: rep.map(item => ({
-          goodId: item.id,
-          num: item.order_num,
-          name: item.name,
-          createdTime: item.created_time,
-          price: item.price,
-          type: item.type,
-          state: item.status,
-        })),
+        list: Array.isArray(rep)
+          ? rep.map(item => ({
+              goodId: item.id,
+              num: item.id,
+              name: item.name,
+              createdTime: item.created_time,
+              price: item.price,
+              type: item.type,
+              state: item.status,
+            }))
+          : [],
       };
     },
   },
@@ -341,6 +358,17 @@ const filters = {
     }),
   },
 
+  // 修改商品状态
+  changeGoodState: {
+    name: 'changeGoodState',
+    method: 'POST',
+    url: API_SERVER_URL + '/book/operate',
+    chop: inp => ({
+      book_id: inp.goodId,
+      type: inp.action,
+    }),
+  },
+
   // 订单列表 $
   listOrders: {
     name: 'listOrders',
@@ -348,8 +376,7 @@ const filters = {
     url: API_SERVER_URL + '/order/list',
     trim: rep => ({
       pageInfo: mockedPageInfo, // rep.pageInfo,
-      list: Array.isArray(rep.data)
-        && rep.data.map(item => orderItemMapper(item, true)),
+      list: Array.isArray(rep) ? rep.map(item => orderItemMapper(item, true)) : [],
     }),
   },
 
@@ -357,15 +384,17 @@ const filters = {
   orderDetail: {
     name: 'orderDetail',
     method: 'POST',
-    url: inp => API_SERVER_URL + `/tasks/detail/${inp.taskId}`,
+    url: inp => API_SERVER_URL + `/order/detail`,
     chop: inp => ({ order_id: inp.orderId }),
     trim: rep => {
       return {
         orderId: rep.order_id,
-        totalPrice: rep.price, // [TODO]
+        totalPrice: rep.price,
         clientComment: rep.message,
-        orderState: rep.status,
-        goodList: rep.book_list.map(item => ({ name: item.name, num: item.number })),
+        orderState: ['confirming', 'delivering',][rep.status],
+        goodList: Array.isArray(rep.book_list)
+          ? rep.book_list.map(item => ({ name: item.name, number: item.num }))
+          : [],
       };
     },
   },
@@ -373,58 +402,62 @@ const filters = {
   // 修改订单状态
   deliverOrder: {
     name: 'deliverOrder',
+    method: 'POST',
     url: API_SERVER_URL + '/book/operate',
     chop: inp => ({
-      book_id: inp.goodId,
+      order_id: inp.orderId,
       type: 1,
     }),
   },
   confirmOrder: {
     name: 'confirmOrder',
+    method: 'POST',
     url: API_SERVER_URL + '/book/operate',
     chop: inp => ({
-      book_id: inp.goodId,
-      type: 2,
+      order_id: inp.orderId,
+      type: 0,
     }),
   },
 
+  // 列出卖书订单
   listSellOrder: {
     name: 'listSellOrder',
     method: 'POST',
     url: API_SERVER_URL + '/intention/list',
-    trim: rep => {
-      return rep.map(item => ({
-        sellOrderId: item.id,
-        price: item.price, // [TODO]
-        tel: item.contact,
-        address: item.address,
-        description: item.description,
-        imgUrl: item.imgUrl,
-        status: item.status,
-      }));
-    },
+    trim: rep => Array.isArray(rep)
+      ? rep.map(item => ({
+          sellOrderId: item.id,
+          price: item.price, // [TODO]
+          tel: item.contact,
+          address: item.address,
+          description: item.description,
+          imgUrl: item.img_url,
+          state: item.status,
+        }))
+      : [],
   },
+  // 改变卖书订单状态
   changeSellOrderState: {
-    name: 'listSellOrder',
+    name: 'changeSellOrderState',
     method: 'POST',
     url: API_SERVER_URL + '/intention/handle',
     chop: inp => ({
-      intention_id: inp.sellOrderList,
-      mode: [,0,1][inp.state],
+      intention_id: inp.sellOrderId,
+      mode: [,1,2][inp.state],
     }),
   },
 };
 
 // 开发环境下向 filter 注入 handler
 if(process.env.NODE_ENV == 'development') {
-  _.merge(filters, require('./apier-mock.js').default);
+  // _.merge(filters, require('./apier-mock.js').default);
 }
 
 export default new CattleBridge({
   debug: (process.env.NODE_ENV === 'development'),
   filters,
   gtrim(rep) {
-    if(!(rep && rep.status)) {
+    if(!(rep && rep.code !== undefined)) {
       return {
         status: {},
         data: {},
@@ -436,7 +469,7 @@ export default new CattleBridge({
     if(!rep.data) {
       rep.data = {};
     }
-    return rep;
+    return rep.data;
   },
   requester(options) {
     let info = loginInfo.retrieve();
@@ -459,7 +492,7 @@ export default new CattleBridge({
         msg: 'HTTP Error',
         frimsg: '网络或服务器错误',
       };
-    } else if (!(respData && respData.status)) {
+    } else if (!(respData && respData.code)) {
       result(false);
       return {
         code: -2,
@@ -467,16 +500,16 @@ export default new CattleBridge({
         frimsg: '返回的数据是无效的',
       };
     } else {
-      result(respData.status.code == 200); // 自动转换
-      if([301, 302, 303].indexOf(respData.status.code) !== -1) {
+      result(respData.code == 200); // 自动转换
+      if([301, 302, 303].indexOf(respData.code) !== -1) {
         loginInfo.exit();
       }
       return {
-        code: respData.status.code || 300,
-        msg: respData.status.msg || 'Unknown Error',
-        frimsg: _.get(statusMsgMap, `${filter.name}.${respData.status.code}`)
-                || _.get(statusMsgMap, `common.${respData.status.code}`)
-                || respData.status.msg
+        code: respData.code || 300,
+        msg: respData.msg || 'Unknown Error',
+        frimsg: _.get(statusMsgMap, `${filter.name}.${respData.code}`)
+                || _.get(statusMsgMap, `common.${respData.code}`)
+                || respData.msg
                 || '未知错误',
       };
     }

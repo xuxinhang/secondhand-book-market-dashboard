@@ -6,7 +6,8 @@ const defaultLoginInfo = {
 };
 
 const checkExpireTime = info => {
-  return Date.now() > info.expireTime && info.expireTime >= 0;
+  // return Date.now() > info.expireTime && info.expireTime >= 0;
+  return false;
 };
 
 function retrieveLoginInfo() {
@@ -67,7 +68,7 @@ function updateLoginInfo(info) {
   }
 }
 
-export default { 
+export default {
   update: updateLoginInfo,
   retrieve: retrieveLoginInfo,
   exit: exitLogin,

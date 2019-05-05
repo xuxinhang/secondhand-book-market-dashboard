@@ -18,7 +18,7 @@ class SellOrder extends React.Component {
     apier.fetch('listSellOrder', {})
       .then(({ data }) => {
         this.setState({
-          orderDataList: data.list || [],
+          orderDataList: data || [],
           loadingList: false,
         });
       })
@@ -32,7 +32,7 @@ class SellOrder extends React.Component {
     Modal.confirm({
       title: '确实要接受此卖书订单吗？',
       onOk: () => {
-        return apier.fetch('acceptSellOrder', { sellOrderId })
+        return apier.fetch('changeSellOrderState', { sellOrderId, state: 1 })
           .then(() => {
             message.success('接受卖书订单成功');
             this.setSellOrderState(sellOrderId, 1);
@@ -51,7 +51,7 @@ class SellOrder extends React.Component {
     Modal.confirm({
       title: '确实要拒绝此卖书订单吗？',
       onOk: () => {
-        return apier.fetch('acceptSellOrder', { sellOrderId })
+        return apier.fetch('changeSellOrderState', { sellOrderId, state: 2 })
           .then(() => {
             message.success('拒绝卖书订单成功');
             this.setSellOrderState(sellOrderId, 2);
@@ -98,7 +98,7 @@ class SellOrder extends React.Component {
                   <Icon type="minus-circle" /> 拒绝
                 </span>,
               ]
-              : [ '已' + [,'接受','拒绝'][item.state] ]
+              : [['','已接受','已拒绝'][item.state]]
           }
         >
           <div styleName="good-image-wrapper">
@@ -118,4 +118,3 @@ class SellOrder extends React.Component {
 }
 
 export default SellOrder;
-
