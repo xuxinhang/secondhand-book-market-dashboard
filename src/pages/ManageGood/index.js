@@ -67,7 +67,7 @@ class OperatorList extends React.Component {
     let updateState = newState => this.setState({ freezeModalProps: newState });
     let { recordId, recordName, action, rowIndex } = e.target.dataset;
     let commonProps = {
-      title: `你是要将商品“${recordName}”${['上架','下架'][action]}吗?`,
+      title: `你是要将图书“${recordName}”${['上架','下架'][action]}吗?`,
       visible: true,
       closable: false,
     };
@@ -94,7 +94,7 @@ class OperatorList extends React.Component {
         action: +action,
       })
       .then(() => {
-        Message.success('此商品的状态已更改');
+        Message.success('此图书的状态已更改');
         freezeModalClose();
         this.setState(state => {
           state.listData[rowIndex].state = +action;
@@ -125,7 +125,7 @@ class OperatorList extends React.Component {
           goodId: +recordId,
         })
         .then(() => {
-          Message.success('已删除此商品');
+          Message.success('已删除此图书');
           this.setState(state => {
             const newListData = [...state.listData];
             newListData.splice(rowIndex, 1);
@@ -169,12 +169,12 @@ class OperatorList extends React.Component {
 
     return (
       <>
-        <PageHeader title="管理商品">
+        <PageHeader title="管理图书">
           <Link to="/admin/AddGood">
             <Button size="small" type="primary"
               className="button--deep-gray-primary ds-button-round-corner"
             >
-              添加商品
+              添加图书
             </Button>
           </Link>
         </PageHeader>
@@ -188,7 +188,7 @@ class OperatorList extends React.Component {
           loading={this.state.tableLoading}
         >
           <Column title="编号" dataIndex="num" width={60} className="ds-table-first-column" />
-          <Column title="商品" dataIndex="name" />
+          <Column title="图书" dataIndex="name" />
           <Column title="创建时间" dataIndex="createdTime" />
           <Column title="价格" dataIndex="price" />
           <Column title="类别" dataIndex="type"
@@ -210,7 +210,7 @@ class OperatorList extends React.Component {
                   data-row-index={index}
                   onClick={this.onDeleteBtnClick}
                 >
-                  删除商品
+                  删除图书
                 </Button>
                 <Link to={`/admin/EditGood/${record.goodId}`}>
                   <Button
@@ -218,7 +218,7 @@ class OperatorList extends React.Component {
                     styleName="operation-btn"
                     type="primary" ghost size="small"
                   >
-                    编辑商品
+                    编辑图书
                   </Button>
                 </Link>
                 <Button
@@ -231,7 +231,7 @@ class OperatorList extends React.Component {
                   data-row-index={index}
                   onClick={this.onChangeStateBtnClick}
                 >
-                  {['下架商品', '上架商品'][record.state]}
+                  {['下架图书', '上架图书'][record.state]}
                 </Button>
               </>
             )}

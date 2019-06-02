@@ -47,7 +47,7 @@ const filters = {
       }, 1000);
     },
   },
-  // 添加编辑商品
+  // 添加编辑图书
   addGood: {
     handler: (resolve, reject, name, input) => {
       setTimeout(() => {
@@ -58,7 +58,7 @@ const filters = {
       }, 600);
     },
   },
-  // 商品列表 @
+  // 图书列表 @
   listGoods: {
     handler: (resolve, reject, name, input) => {
       let mocked = Mock.mock({
@@ -97,7 +97,7 @@ const filters = {
       setTimeout(() => resolve(mocked), 230);
     },
   },
-  // 修改商品状态 @
+  // 修改图书状态 @
   changeGoodState: {
     // handler: (resolve, reject, name, input) => {
     //   setTimeout(() => {
@@ -109,7 +109,7 @@ const filters = {
     //   }, 2230);
     // },
   },
-  // 删除商品 @
+  // 删除图书 @
   deleteGood: {
     handler: (resolve, reject, name, input) => {
       setTimeout(() => {

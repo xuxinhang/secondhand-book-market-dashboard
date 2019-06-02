@@ -45,10 +45,10 @@ const pageRoutes = [
 
 const menuLinks = [
   {
-    name: '商品中心',
+    name: '图书中心',
     menus: [
-      { path: 'AddGood', title: '添加商品' },
-      { path: 'ManageGood', title: '管理商品' },
+      { path: 'AddGood', title: '添加图书' },
+      { path: 'ManageGood', title: '管理图书' },
     ]
   }, {
     name: '订单中心',

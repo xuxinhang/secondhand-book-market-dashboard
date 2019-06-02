@@ -92,7 +92,7 @@ class AddTask extends React.Component {
     const editGoodMode = this.props.match.params.goodId !== undefined;
     return (
       <>
-        <PageHeader title={`${editGoodMode ? '编辑' : '新建'}商品`} />
+        <PageHeader title={`${editGoodMode ? '编辑' : '新建'}图书`} />
         <section styleName="form-wrap">
           <Spin spinning={this.state.formLoading}>
             <WrappedForm
@@ -111,8 +111,8 @@ class RawForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      // imageRemoteUrl:  undefined, // 商品图片的URL（已上传的）
-      imagePreviewUrl: undefined, // 商品图片的URL（预览缓存）
+      // imageRemoteUrl:  undefined, // 图书图片的URL（已上传的）
+      imagePreviewUrl: undefined, // 图书图片的URL（预览缓存）
     };
     this.formOp = this.props.form;
     // 提交数据
@@ -197,11 +197,11 @@ class RawForm extends React.Component {
         <div className="line-decorated-text" styleName="form-section-title">基本信息</div>
         <Row gutter={36}>
           <Col span={8}>
-            <Form.Item label="商品名称">
+            <Form.Item label="图书名称">
             {getFieldDecorator('name', {
               initialValue: initialFormValue.name,
               rules: [
-                { required: true, message: '请输入商品名称' },
+                { required: true, message: '请输入图书名称' },
               ],
             })(
               <Input />
@@ -214,8 +214,8 @@ class RawForm extends React.Component {
               normalize: v => String(v),
               initialValue: initialFormValue.price,
               rules: [
-                { required: true, message: '需输入商品价格' },
-                { pattern: /^[1-9]+?[0-9]*(\.[0-9]{1,2})?$/, message: '输入合法的商品价格' },
+                { required: true, message: '需输入图书价格' },
+                { pattern: /^[1-9]+?[0-9]*(\.[0-9]{1,2})?$/, message: '输入合法的图书价格' },
               ],
             })(
               <Input onBlur={() => this.trimPriceField()} />
@@ -223,7 +223,7 @@ class RawForm extends React.Component {
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label="商品类别">
+            <Form.Item label="图书类别">
             {getFieldDecorator('type', {
               initialValue: initialFormValue.type,
               rules: [{ required: true, message: '请选择类别' }],
@@ -238,7 +238,7 @@ class RawForm extends React.Component {
         </Row>
         <Row>
           <Col span={36}>
-            <Form.Item label="商品描述">
+            <Form.Item label="图书描述">
             {getFieldDecorator('description', {
               initialValue: initialFormValue.description,
               rules: [
@@ -253,7 +253,7 @@ class RawForm extends React.Component {
         </Row>
         <Row gutter={36} styleName="form-row">
           <Col span={14}>
-            <div className="line-decorated-text" styleName="form-section-title">商品标签</div>
+            <div className="line-decorated-text" styleName="form-section-title">图书标签</div>
             {tagList.map(({ name, label, tags }) => (
               <Row key={name} styleName="tag-selector-row">
                 <Col span={6}>{label}</Col>
@@ -268,7 +268,7 @@ class RawForm extends React.Component {
             ))}
           </Col>
           <Col span={10}>
-            <div className="line-decorated-text" styleName="form-section-title">商品图片</div>
+            <div className="line-decorated-text" styleName="form-section-title">图书图片</div>
             <Form.Item label="">
               {getFieldDecorator('image', {
                 valuePropName: 'fileList',
@@ -303,7 +303,7 @@ class RawForm extends React.Component {
                         </p>
                         <p className="ant-upload-text" styleName="form-uploader-filename">
                             {/* `${img.name} (${Math.round(img.size/1024/1024*100)/100}MB)` */}
-                            商品图片上传
+                            图书图片上传
                         </p>
                         <p className="ant-upload-hint">
                           {/* 请上传包括STL文件、照片和描述文件的压缩包 */}

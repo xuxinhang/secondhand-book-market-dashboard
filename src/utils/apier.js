@@ -283,7 +283,7 @@ const filters = {
     }),
   },
 
-  // 添加编辑商品 $
+  // 添加编辑图书 $
   addGood: {
     name: 'addGood',
     method: 'POST',
@@ -304,7 +304,7 @@ const filters = {
     },
   },
 
-  // 删除商品 $
+  // 删除图书 $
   deleteGood: {
     name: 'deleteGood',
     method: 'POST',
@@ -312,7 +312,7 @@ const filters = {
     chop: rep => ({ book_id: rep.goodId }),
   },
 
-  // 商品列表 $
+  // 图书列表 $
   listGoods: {
     name: 'listGoods',
     method: 'POST',
@@ -336,7 +336,7 @@ const filters = {
     },
   },
 
-  // 商品详情 $
+  // 图书详情 $
   goodDetail: {
     name: 'goodDetail',
     method: 'POST',
@@ -358,7 +358,7 @@ const filters = {
     }),
   },
 
-  // 修改商品状态
+  // 修改图书状态
   changeGoodState: {
     name: 'changeGoodState',
     method: 'POST',
