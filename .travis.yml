@@ -1,0 +1,16 @@
+language: node_js
+node_js:
+- 8
+addons:
+  ssh_known_hosts: 159.65.66.147
+before_deploy:
+- echo $SSH_PRIVATE_KET > ./__deploy_rsa
+- eval "$(ssh-agent -s)"
+- chmod 600 ./__deploy_rsa
+- ssh-add ./__deploy_rsa
+deploy:
+  provider: script
+  script: scp -rf root@159.65.66.147 ./build/* ~/secondhandbook/tmpl/dashboard/
+  skip_cleanup: true
+  on:
+    branch: release
