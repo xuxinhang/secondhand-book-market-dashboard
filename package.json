@@ -48,7 +48,7 @@
     "prop-types": "^15.6.2",
     "raf": "3.4.0",
     "react": "^16.8.4",
-    "react-dev-utils": "^5.0.2",
+    "react-dev-utils": "^11.0.4",
     "react-dom": "^16.8.4",
     "react-hot-loader": "^4.3.11",
     "react-router": "^4.4.0",
